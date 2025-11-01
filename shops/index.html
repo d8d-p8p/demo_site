@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飲食店・販売店一覧 | 長期熟成酒研究会</title>
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <!-- AOS Animation -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
+</head>
+
+<body>
+    <div id="header-placeholder"></div>
+    <main class="section">
+        <div class="container">
+            <nav class="breadcrumb" aria-label="breadcrumb">
+                <ol>
+                    <li><a href="../index.html">Home</a></li>
+                    <li aria-current="page">飲食店・販売店</li>
+                </ol>
+            </nav>
+            <header class="page-header">
+                <div class="section-header">
+                    <h1 class="section-title-jp">飲食店・販売店</h1>
+                    <p class="section-subtitle-en">Where to Find Aged Sake</p>
+                </div>
+                <p class="page-lead">全国各地の飲食店・販売店で、熟成古酒をお楽しみいただけます。お近くのお店や、気になるジャンルで絞り込んでお探しください。</p>
+            </header>
+
+            <!-- Filter Bar (popup trigger + sort) -->
+            <div class="filter-section">
+                <div class="filter-header">
+                    <!-- Open Filter Modal Button -->
+                    <button class="filter-accordion-toggle" id="filterOpen" aria-haspopup="dialog">
+                        <svg class="filter-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path
+                                d="M3 6a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 15.414V19a1 1 0 01-.447.894l-2 1A1 1 0 0110 20v-4.586a1 1 0 00-.293-.707L3.293 8.707A1 1 0 013 8V6z">
+                            </path>
+                        </svg>
+                        <span class="filter-label">絞り込み</span>
+                    </button>
+
+                    <!-- Sort Controls -->
+                    <div class="sort-controls">
+                        <label for="filterSort" class="sort-label">
+                            <svg class="sort-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path
+                                    d="M3 4a1 1 0 00-1 1v2a1 1 0 001 1h5a1 1 0 001-1V5a1 1 0 00-1-1H3zM15 4a1 1 0 00-1 1v2a1 1 0 001 1h5a1 1 0 001-1V5a1 1 0 00-1-1h-5zM3 14a1 1 0 00-1 1v2a1 1 0 001 1h5a1 1 0 001-1v-2a1 1 0 00-1-1H3zM15 14a1 1 0 00-1 1v2a1 1 0 001 1h5a1 1 0 001-1v-2a1 1 0 00-1-1h-5z">
+                                </path>
+                            </svg>
+                        </label>
+                        <select id="filterSort" aria-label="並び替え">
+                            <option value="default">おすすめ順</option>
+                            <option value="name-asc">店名（あいうえお順）</option>
+                            <option value="area-asc">エリア（五十音順）</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Modal -->
+            <div class="filter-modal" id="filterModal" aria-hidden="true">
+                <div class="filter-modal__overlay" data-close="true"></div>
+                <div class="filter-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="filterModalTitle">
+                    <header class="filter-modal__header">
+                        <h2 id="filterModalTitle">絞り込み</h2>
+                        <button class="filter-modal__close" id="filterClose" aria-label="閉じる">×</button>
+                    </header>
+                    <div class="filter-modal__body">
+                        <section class="filter-bar" aria-label="飲食店・販売店フィルター">
+                            <div class="filter-row">
+                                <div class="filter-group">
+                                    <label for="filterSearch">キーワード検索</label>
+                                    <input type="search" id="filterSearch" placeholder="店名・説明で検索">
+                                </div>
+                                <div class="filter-group">
+                                    <label for="filterType">種別</label>
+                                    <select id="filterType">
+                                        <option value="">すべて</option>
+                                        <option value="dining">飲食店</option>
+                                        <option value="retail">販売店</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label for="filterArea">エリア</label>
+                                    <select id="filterArea">
+                                        <option value="">全国</option>
+                                        <option value="東京都">東京都</option>
+                                        <option value="大阪府">大阪府</option>
+                                        <option value="京都府">京都府</option>
+                                        <option value="福岡県">福岡県</option>
+                                        <option value="新潟県">新潟県</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="filter-actions">
+                                <button class="btn btn-primary" id="filterApply" type="button">検索する</button>
+                                <button class="btn btn-secondary" id="filterReset" type="button">クリア</button>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+            <div class="content-grid">
+                <article class="shop-card" data-type="dining" data-area="東京都">
+                    <div class="shop-image">
+                        <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80" alt="和食割烹">
+                    </div>
+                    <div class="shop-content">
+                        <div class="shop-type">飲食店</div>
+                        <h3 class="shop-name">和食割烹 〇〇〇〇</h3>
+                        <p class="shop-location">東京都中央区</p>
+                        <p class="shop-description">四季の食材と熟成古酒のペアリング</p>
+                        <a class="shop-link" href="tokyo-ginza.html">詳細</a>
+                    </div>
+                </article>
+                <article class="shop-card" data-type="retail" data-area="大阪府">
+                    <div class="shop-image">
+                        <img src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=600&q=80" alt="日本酒専門店">
+                    </div>
+                    <div class="shop-content">
+                        <div class="shop-type">販売店</div>
+                        <h3 class="shop-name">日本酒専門店 〇〇〇〇</h3>
+                        <p class="shop-location">大阪府大阪市</p>
+                        <p class="shop-description">希少な熟成古酒を多数品揃え</p>
+                        <a class="shop-link" href="#">詳細</a>
+                    </div>
+                </article>
+                <article class="shop-card" data-type="dining" data-area="京都府">
+                    <div class="shop-image">
+                        <img src="https://images.unsplash.com/photo-1579027989536-b7b1f875659b?w=600&q=80" alt="日本料理">
+                    </div>
+                    <div class="shop-content">
+                        <div class="shop-type">飲食店</div>
+                        <h3 class="shop-name">日本料理 〇〇〇〇</h3>
+                        <p class="shop-location">京都府京都市</p>
+                        <p class="shop-description">風情ある空間で古酒と会席</p>
+                        <a class="shop-link" href="#">詳細</a>
+                    </div>
+                </article>
+                <article class="shop-card" data-type="dining" data-area="福岡県">
+                    <div class="shop-image">
+                        <img src="https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=600&q=80" alt="居酒屋">
+                    </div>
+                    <div class="shop-content">
+                        <div class="shop-type">飲食店</div>
+                        <h3 class="shop-name">居酒屋 〇〇〇〇</h3>
+                        <p class="shop-location">福岡県福岡市</p>
+                        <p class="shop-description">気軽に古酒を楽しめるラインナップ</p>
+                        <a class="shop-link" href="#">詳細</a>
+                    </div>
+                </article>
+                <article class="shop-card" data-type="retail" data-area="新潟県">
+                    <div class="shop-image">
+                        <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&q=80" alt="酒販店">
+                    </div>
+                    <div class="shop-content">
+                        <div class="shop-type">販売店</div>
+                        <h3 class="shop-name">酒販店 〇〇〇〇</h3>
+                        <p class="shop-location">新潟県新潟市</p>
+                        <p class="shop-description">地元蔵元の古酒を中心に厳選</p>
+                        <a class="shop-link" href="#">詳細</a>
+                    </div>
+                </article>
+            </div>
+            <div class="no-results" id="noResults">条件に合致する店舗が見つかりませんでした。</div>
+        </div>
+    </main>
+    <div id="footer-placeholder"></div>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="../assets/js/includes.js" defer></script>
+    <script src="../assets/js/main.js"></script>
+</body>
+
+</html>

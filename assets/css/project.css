@@ -1,0 +1,158 @@
+/* ============================================
+	 Project Page Styles: 日本酒百年貯蔵プロジェクト
+	 このファイルでページ固有の見栄えのみ調整し、
+	 レイアウト/共通デザインは style.css を再利用します。
+	 ============================================ */
+
+/* Hero */
+.project-hero {
+    position: relative;
+    min-height: 42vh;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin: 0 var(--spacing-sm);
+}
+
+.project-hero__bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transform: scale(1.06);
+}
+
+.project-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.45));
+}
+
+.project-hero__content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: clamp(2rem, 6vw, 4rem) 1rem;
+    color: #fff;
+}
+
+.project-hero__content h2 {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    letter-spacing: 0.06em;
+    margin-bottom: 0.25rem;
+}
+
+.project-hero__content p {
+    opacity: 0.9;
+}
+
+/* Overview */
+.project-overview .intro-text {
+    max-width: var(--container-narrow);
+    margin: 0 auto;
+    color: var(--color-text-light);
+    line-height: 1.9;
+}
+
+/* Values: 既存カードをそのまま使用 */
+.project-values .society-card {
+    box-shadow: none;
+    border: 1px solid var(--color-border);
+}
+
+/* Timeline: 既存 .timeline を利用 */
+.project-timeline .timeline {
+    max-width: var(--container-narrow);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Steps (参加方法) */
+.project-steps {
+    counter-reset: step;
+    display: grid;
+    gap: var(--spacing-md);
+    max-width: var(--container-narrow);
+    margin: 0 auto;
+    padding: 0;
+}
+
+.project-steps>li {
+    list-style: none;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: #fff;
+}
+
+.project-steps>li::before {
+    counter-increment: step;
+    content: counter(step);
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: var(--color-accent);
+    color: #fff;
+    font-weight: 600;
+    font-family: var(--font-en);
+}
+
+.project-steps h4 {
+    margin: 0 0 0.25rem;
+}
+
+.project-steps p {
+    margin: 0;
+    color: var(--color-text-light);
+}
+
+/* CTA card spacing */
+.project-cta .society-card {
+    max-width: var(--container-narrow);
+    margin: 0 auto;
+    box-shadow: none;
+    border: 1px solid var(--color-border);
+}
+
+/* Pager spacing on this page */
+.pager-cards {
+    margin-top: var(--spacing-xl);
+}
+
+/* Restore section spacing on breadcrumb pages (this page) */
+/* グローバルで breadcrumb ページの .section の上パディングが 0 にされているため、
+     プロジェクト内セクションに限り上パディングを復帰させる */
+body:has(.breadcrumb) .project-overview,
+body:has(.breadcrumb) .project-values,
+body:has(.breadcrumb) .project-timeline,
+body:has(.breadcrumb) .project-policy,
+body:has(.breadcrumb) .project-spec,
+body:has(.breadcrumb) .project-changes,
+body:has(.breadcrumb) .project-risks,
+body:has(.breadcrumb) .project-archive {
+    padding-top: var(--spacing-xl);
+}
+
+/* セクション同士の密着防止（保険的にマージンも追加） */
+.project-overview+.section,
+.project-values+.section,
+.project-timeline+.section,
+.project-policy+.section,
+.project-spec+.section,
+.project-changes+.section,
+.project-risks+.section {
+    margin-top: var(--spacing-xl);
+}
+
+@media (max-width: 768px) {
+    .project-hero {
+        min-height: 36vh;
+    }
+}

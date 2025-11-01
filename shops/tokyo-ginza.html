@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>和食割烹 〇〇〇〇 | 飲食店・販売店詳細 | 長期熟成酒研究会</title>
+    <meta name="description" content="四季の食材と熟成古酒のペアリングを楽しめる割烹。常時数種類の熟成古酒を提供しています。">
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/detail.css">
+</head>
+
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="shop-detail">
+        <!-- パンくず -->
+        <nav class="breadcrumb" aria-label="breadcrumb">
+            <div class="container">
+                <ol>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="./index.html">飲食店・販売店</a></li>
+                    <li aria-current="page">和食割烹 〇〇〇〇</li>
+                </ol>
+            </div>
+        </nav>
+
+        <!-- 店舗名（最上部） -->
+        <div class="container">
+            <h1 class="shop-name-title">和食割烹 〇〇〇〇</h1>
+        </div>
+
+        <!-- ヒーロー画像（画像のみ） -->
+        <figure class="shop-hero">
+            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80"
+                alt="和食割烹 〇〇〇〇 - 店内の様子" class="shop-hero__image">
+        </figure>
+
+        <div class="container">
+            <!-- 説明文（1行） -->
+            <p class="shop-one-liner">四季の食材と熟成古酒のペアリングを楽しめる割烹。</p>
+
+            <!-- アクセス/基本情報（PCは地図が左） -->
+            <section class="shop-access">
+                <div class="shop-access__map">
+                    <h2 class="shop-info-section__heading">アクセス</h2>
+                    <section id="map" class="shop-map" data-lat="35.6749" data-lng="139.7594" data-title="和食割烹 〇〇〇〇">
+                        <div class="map-placeholder"></div>
+                    </section>
+                </div>
+                <aside class="shop-access__info">
+                    <section class="shop-info-section">
+                        <h2 class="shop-info-section__heading">基本情報</h2>
+                        <div class="info-box">
+                            <dl class="info-list">
+                                <div class="info-item">
+                                    <dt class="info-label">住所</dt>
+                                    <dd class="info-value">東京都中央区銀座 1-1-1</dd>
+                                </div>
+                                <div class="info-item">
+                                    <dt class="info-label">営業時間</dt>
+                                    <dd class="info-value">17:00 - 23:00（L.O. 22:00）</dd>
+                                </div>
+                                <div class="info-item">
+                                    <dt class="info-label">定休日</dt>
+                                    <dd class="info-value">日曜・祝日</dd>
+                                </div>
+                                <div class="info-item">
+                                    <dt class="info-label">電話</dt>
+                                    <dd class="info-value"><a href="tel:0300000000">03-0000-0000</a></dd>
+                                </div>
+                                <div class="info-item">
+                                    <dt class="info-label">公式サイト</dt>
+                                    <dd class="info-value"><a href="https://www.ayana.com" target="_blank"
+                                            rel="noopener">https://www.ayana.com</a></dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </section>
+                </aside>
+            </section>
+
+            <!-- 概要（紹介文） -->
+            <section class="shop-section shop-section--intro">
+                <p>旬の食材を活かしたコース料理とともに、常時数種類の熟成古酒を提供しています。温度帯や酒器にもこだわり、最適な状態で味わっていただけます。</p>
+            </section>
+
+            <!-- ギャラリー（任意） data-gallery="yes" の時のみ表示） -->
+            <section class="shop-gallery" data-gallery="no">
+                <div class="swiper shopGallerySwiper">
+                    <div class="swiper-wrapper">
+
+                    </div>
+                    <button class="swiper-button-prev shops-button-prev" aria-label="前の画像"></button>
+                    <button class="swiper-button-next shops-button-next" aria-label="次の画像"></button>
+                </div>
+            </section>
+
+
+            <!-- 旧「基本情報」セクションは上の右カラムに統合済み -->
+
+            <!-- 店舗一覧への導線（カード型ページャー） -->
+            <div class="pager-cards">
+                <a href="./index.html" class="pager-card" aria-label="飲食店・販売店一覧へ">
+                    <div>
+                        <div class="pager-card__label">Back to List</div>
+                        <div class="pager-card__title">飲食店・販売店一覧へ</div>
+                    </div>
+                    <svg class="pager-card__arrow" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <polyline points="9 6 15 12 9 18"></polyline>
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <!-- モバイル固定CTAは本番構成から除外 -->
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <!-- JSON-LD構造化データ -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Restaurant",
+        "name": "和食割烹 〇〇〇〇",
+        "description": "四季の食材と熟成古酒のペアリングを楽しめる割烹。常時数種類の熟成古酒を提供しています。",
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "JP",
+            "addressLocality": "東京都中央区",
+            "streetAddress": "銀座 1-1-1"
+        },
+        "telephone": "03-0000-0000",
+        "url": "https://www.ayana.com",
+        "servesCuisine": ["Japanese"],
+        "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            "opens": "17:00",
+            "closes": "23:00"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "35.6749",
+            "longitude": "139.7594"
+        }
+    }
+    </script>
+
+    <script src="../assets/js/includes.js" defer></script>
+    <script src="../assets/js/main.js" defer></script>
+</body>
+
+</html>

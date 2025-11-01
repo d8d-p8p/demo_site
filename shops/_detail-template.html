@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{店舗名}} | 飲食店・販売店詳細 | 長期熟成酒研究会</title>
+    <meta name="description" content="{{店舗の短い紹介文（70-120字程度）}}" />
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/detail.css" />
+</head>
+
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="shop-detail">
+        <!-- パンくず -->
+        <nav class="breadcrumb" aria-label="breadcrumb">
+            <div class="container">
+                <ol>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="./index.html">飲食店・販売店</a></li>
+                    <li aria-current="page">{{店舗名}}</li>
+                </ol>
+            </div>
+        </nav>
+
+        <!-- 店舗名（最上部） -->
+        <div class="container">
+            <h1 class="shop-name-title">{{店舗名}}</h1>
+        </div>
+
+        <!-- ヒーロー画像（画像のみ） -->
+        <figure class="shop-hero">
+            <!-- 推奨: 1600x800 以上の横長画像 -->
+            <img src="{{メイン画像URL}}" alt="{{店舗名}} - 店内/外観" class="shop-hero__image" />
+        </figure>
+
+        <div class="container">
+            <!-- 説明文（1行） -->
+            <p class="shop-one-liner">{{店舗の特徴を一行で}}</p>
+
+            <!-- アクセス/基本情報（PCは地図が左） -->
+            <section class="shop-access">
+                <div class="shop-access__map">
+                    <h2 class="shop-info-section__heading">アクセス</h2>
+                    <section id="map" class="shop-map" data-lat="{{35.xxxx}}" data-lng="{{139.xxxx}}"
+                        data-title="{{店舗名}}">
+                        <div class="map-placeholder"></div>
+                    </section>
+                </div>
+                <aside class="shop-access__info">
+                    <section class="shop-info-section">
+                        <h2 class="shop-info-section__heading">基本情報</h2>
+                        <div class="info-box">
+                            <dl class="info-list">
+                                <div class="info-item">
+                                    <dt class="info-label">住所</dt>
+                                    <dd class="info-value">{{住所}}</dd>
+                                </div>
+                                <div class="info-item">
+                                    <dt class="info-label">営業時間</dt>
+                                    <dd class="info-value">{{営業時間}}</dd>
+                                </div>
+                                <div class="info-item">
+                                    <dt class="info-label">定休日</dt>
+                                    <dd class="info-value">{{定休日}}</dd>
+                                </div>
+                                <div class="info-item">
+                                    <dt class="info-label">電話</dt>
+                                    <dd class="info-value"><a href="tel:{{TELハイフン無し}}">{{TEL表示}}</a></dd>
+                                </div>
+                                <div class="info-item">
+                                    <dt class="info-label">公式サイト</dt>
+                                    <dd class="info-value"><a href="{{URL}}" target="_blank" rel="noopener">{{URL}}</a>
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </section>
+                </aside>
+            </section>
+
+            <!-- ギャラリー（任意） data-gallery="yes" でSwiper起動。未設定/"no"で静的表示 -->
+            <section class="shop-gallery" data-gallery="no">
+                <div class="swiper shopGallerySwiper">
+                    <div class="swiper-wrapper">
+                        <!-- 任意：必要な画像を追加 -->
+                    </div>
+                    <button class="swiper-button-prev shops-button-prev" aria-label="前の画像"></button>
+                    <button class="swiper-button-next shops-button-next" aria-label="次の画像"></button>
+                </div>
+            </section>
+
+            <!-- メニュー紹介（店舗による） -->
+            <section class="shop-menu">
+                <h2 class="shop-section__heading">メニューのご紹介</h2>
+                <div class="shop-menu__content">
+                    <p>{{名物やコース、価格帯などを簡潔に}}</p>
+                </div>
+            </section>
+
+            <!-- 関連店舗（任意） -->
+            <section class="related">
+                <h2 class="section-title-jp">他の店舗</h2>
+                <p class="related-subtitle">長期熟成酒を楽しめる他のスポット</p>
+                <div class="related-grid">
+                    <!-- 似た店舗カードを必要数配置 -->
+                    <article class="shop-card-mini">
+                        <div class="shop-card-mini__image">
+                            <img src="{{画像URL}}" alt="{{店舗名例}}" />
+                        </div>
+                        <div class="shop-card-mini__content">
+                            <h3 class="shop-card-mini__name">{{店舗名例}}</h3>
+                            <p class="shop-card-mini__location">{{エリア例}}</p>
+                            <a class="shop-card-mini__link" href="{{詳細ページ}}">詳細</a>
+                        </div>
+                    </article>
+                </div>
+                <div class="related-footer">
+                    <a href="./index.html" class="related-link">飲食店・販売店一覧</a>
+                </div>
+            </section>
+        </div>
+
+        <!-- ※本番構成：店舗名 / ヒーロー / 一行説明 / アクセス(地図+基本情報) / メニュー(任意) / ギャラリー(任意) / 他店舗 -->
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <!-- schema.org（必要に応じて編集） -->
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "{{店舗名}}",
+    "description": "{{概要}}",
+    "address": {"@type": "PostalAddress","addressCountry": "JP","addressLocality": "{{市区町村}}","streetAddress": "{{丁目番地}}"},
+    "telephone": "{{TEL表示}}",
+    "url": "{{URL}}",
+    "servesCuisine": ["Japanese"],
+    "openingHoursSpecification": {"@type": "OpeningHoursSpecification","dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens": "{{開店時刻}}","closes": "{{閉店時刻}}"},
+    "geo": {"@type": "GeoCoordinates","latitude": "{{35.xxxx}}","longitude": "{{139.xxxx}}"}
+  }
+  </script>
+
+    <script src="../assets/js/includes.js" defer></script>
+    <script src="../assets/js/main.js" defer></script>
+</body>
+
+</html>
