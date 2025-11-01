@@ -645,42 +645,77 @@ function switchLanguage(lang) {
         return;
     }
 
-    // HTTP/HTTPS mode: keep absolute root-based paths
+    // HTTP/HTTPS mode: handle GitHub Pages and regular hosting
     const url = new URL(window.location.href);
     const pathname = url.pathname;
     const hadTrailingSlash = pathname.endsWith('/');
     const segments = pathname.split('/').filter(Boolean);
     const supportedLangs = ['en', 'fr'];
+
+    // Check if we're on GitHub Pages
+    const isGitHubPages = window.location.hostname.includes('github.io');
+    let repoName = '';
+    let pathAfterRepo = segments.slice();
+
+    if (isGitHubPages && segments.length > 0) {
+        // First segment is usually the repository name
+        repoName = segments[0];
+        pathAfterRepo = segments.slice(1);
+    }
+
     let newPathname = '';
 
-    if (segments.length > 0 && supportedLangs.includes(segments[0])) {
+    // Check if current path has language segment (after repo name if on GitHub Pages)
+    const currentLangSegment = pathAfterRepo.length > 0 && supportedLangs.includes(pathAfterRepo[0]) ? pathAfterRepo[0] : null;
+
+    if (currentLangSegment) {
+        // Currently in a language directory
         if (lang === 'ja') {
-            segments.shift();
-            newPathname = '/' + segments.join('/');
-            if (hadTrailingSlash || newPathname === '/') newPathname = newPathname.endsWith('/') ? newPathname : newPathname + '/';
-            if (newPathname === '//') newPathname = '/';
+            // Switch to Japanese (remove language segment)
+            const remainingPath = pathAfterRepo.slice(1);
+            if (isGitHubPages) {
+                newPathname = `/${repoName}` + (remainingPath.length > 0 ? `/${remainingPath.join('/')}` : '') + '/';
+            } else {
+                newPathname = '/' + (remainingPath.length > 0 ? remainingPath.join('/') : '') + (remainingPath.length > 0 ? '/' : '');
+                if (newPathname === '//') newPathname = '/';
+            }
         } else {
-            segments[0] = lang;
-            newPathname = '/' + segments.join('/');
-            if (hadTrailingSlash) newPathname += '/';
+            // Switch to different language
+            pathAfterRepo[0] = lang;
+            if (isGitHubPages) {
+                newPathname = `/${repoName}/${pathAfterRepo.join('/')}/`;
+            } else {
+                newPathname = `/${pathAfterRepo.join('/')}/`;
+            }
         }
     } else {
+        // Currently in Japanese (no language segment)
         if (lang === 'ja') {
-            if (pathname === '/' || pathname === '/index.html') {
-                newPathname = '/';
-            } else {
-                newPathname = pathname;
-                if (hadTrailingSlash && !newPathname.endsWith('/')) newPathname += '/';
-            }
+            // Stay in Japanese
+            newPathname = pathname;
         } else {
-            if (pathname === '/' || pathname === '/index.html') {
-                newPathname = `/${lang}/`;
+            // Switch to other language
+            if (isGitHubPages) {
+                const remainingPath = pathAfterRepo.length > 0 ? `/${pathAfterRepo.join('/')}` : '';
+                newPathname = `/${repoName}/${lang}${remainingPath}/`;
             } else {
-                newPathname = '/' + lang + (pathname.startsWith('/') ? pathname : '/' + pathname);
+                newPathname = `/${lang}${pathname === '/' ? '/' : pathname}`;
+                if (!newPathname.endsWith('/')) newPathname += '/';
             }
         }
-        newPathname = newPathname.replace(/\/+/g, '/');
     }
+
+    // Clean up double slashes
+    newPathname = newPathname.replace(/\/+/g, '/');
+
+    console.log('Language switch debug:');
+    console.log('Is GitHub Pages:', isGitHubPages);
+    console.log('Repository name:', repoName);
+    console.log('Current path:', pathname);
+    console.log('Path after repo:', pathAfterRepo);
+    console.log('Current lang segment:', currentLangSegment);
+    console.log('Target lang:', lang);
+    console.log('New pathname:', newPathname);
 
     const newUrl = newPathname + url.search + url.hash;
     window.location.href = newUrl;
