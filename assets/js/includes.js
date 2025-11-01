@@ -164,90 +164,69 @@
 
         console.log('🌐 Current path:', currentPath);
 
-        // For GitHub Pages, extract repository name if present
+        // Simple and reliable path construction for GitHub Pages
         const isGitHubPages = window.location.hostname.includes('github.io');
-        let basePath = '';
-        let relativePath = currentPath;
-
-        if (isGitHubPages) {
-            const pathParts = currentPath.split('/').filter(part => part);
-            if (pathParts.length > 0) {
-                basePath = '/' + pathParts[0]; // Repository name
-                relativePath = '/' + pathParts.slice(1).join('/');
-                if (!relativePath.endsWith('/') && !relativePath.includes('.')) {
-                    relativePath += '/';
-                }
-            }
-        }
-
-        console.log('🌐 Base path:', basePath);
-        console.log('🌐 Relative path:', relativePath);
-
         let newPath = '';
 
-        // Determine current language and create new path
-        if (relativePath.includes('/en/')) {
-            // Currently in English
-            if (targetLang === 'ja') {
-                newPath = relativePath.replace('/en/', '/');
-            } else if (targetLang === 'fr') {
-                newPath = relativePath.replace('/en/', '/fr/');
-            } else {
-                return; // Same language, no change needed
+        if (isGitHubPages) {
+            // For GitHub Pages: /repository_name/en/index.html format
+            const pathParts = currentPath.split('/').filter(part => part);
+            const repoName = pathParts[0] || ''; // First part is repository name
+
+            console.log('🌐 Repository name:', repoName);
+
+            // Determine current language
+            let currentLang = 'ja';
+            if (currentPath.includes('/en/')) {
+                currentLang = 'en';
+            } else if (currentPath.includes('/fr/')) {
+                currentLang = 'fr';
             }
-        } else if (relativePath.includes('/fr/')) {
-            // Currently in French
+
+            console.log('🌐 Current language:', currentLang);
+
+            // Don't switch to the same language
+            if (currentLang === targetLang) {
+                console.log('🌐 Already in target language, no switch needed');
+                return;
+            }
+
+            // Construct new path based on target language
             if (targetLang === 'ja') {
-                newPath = relativePath.replace('/fr/', '/');
+                // Switch to Japanese (root)
+                newPath = `/${repoName}/index.html`;
             } else if (targetLang === 'en') {
-                newPath = relativePath.replace('/fr/', '/en/');
-            } else {
-                return; // Same language, no change needed
+                // Switch to English
+                newPath = `/${repoName}/en/index.html`;
+            } else if (targetLang === 'fr') {
+                // Switch to French
+                newPath = `/${repoName}/fr/index.html`;
             }
         } else {
-            // Currently in Japanese (root)
-            if (targetLang === 'en') {
-                // Handle root index.html specially
-                if (relativePath.endsWith('/') || relativePath.endsWith('/index.html') || relativePath === '/') {
+            // Local development - simpler path handling
+            if (currentPath.includes('/en/')) {
+                if (targetLang === 'ja') {
+                    newPath = currentPath.replace('/en/', '/');
+                } else if (targetLang === 'fr') {
+                    newPath = currentPath.replace('/en/', '/fr/');
+                }
+            } else if (currentPath.includes('/fr/')) {
+                if (targetLang === 'ja') {
+                    newPath = currentPath.replace('/fr/', '/');
+                } else if (targetLang === 'en') {
+                    newPath = currentPath.replace('/fr/', '/en/');
+                }
+            } else {
+                // Currently in Japanese
+                if (targetLang === 'en') {
                     newPath = '/en/index.html';
-                } else {
-                    newPath = '/en' + relativePath;
-                }
-            } else if (targetLang === 'fr') {
-                // Handle root index.html specially
-                if (relativePath.endsWith('/') || relativePath.endsWith('/index.html') || relativePath === '/') {
+                } else if (targetLang === 'fr') {
                     newPath = '/fr/index.html';
-                } else {
-                    newPath = '/fr' + relativePath;
                 }
-            } else {
-                return; // Same language, no change needed
             }
         }
 
-        // Combine base path for GitHub Pages
-        if (isGitHubPages && basePath) {
-            newPath = basePath + newPath;
-        }
-
-        // Handle GitHub Pages path resolution
-        const isGitHubPagesEnv = window.location.hostname.includes('github.io');
-        if (isGitHubPagesEnv) {
-            // For GitHub Pages, we need to handle the repository name in the path
-            const repoName = window.location.pathname.split('/')[1] || '';
-
-            if (newPath.startsWith('/')) {
-                if (repoName && !newPath.startsWith(`/${repoName}/`)) {
-                    newPath = `/${repoName}${newPath}`;
-                }
-            } else {
-                // If it's a relative path, make it work from current location
-                const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-                newPath = basePath + newPath;
-            }
-        }
-
-        if (newPath) {
+        console.log('🌐 Final new path:', newPath);        if (newPath) {
             const fullNewUrl = newPath + currentSearch + currentHash;
             console.log('🌐 Redirecting to:', fullNewUrl);
             window.location.href = fullNewUrl;
