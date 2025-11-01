@@ -56,9 +56,13 @@
         });
     }
 
-    // Additional fix for file:// protocol on root pages
-    function fixPathsForFileProtocolRoot() {
-        if (window.location.protocol !== 'file:') return;
+    // Additional fix for file:// protocol or GitHub Pages on root pages
+    function fixPathsForRootPages() {
+        const isFileProtocol = window.location.protocol === 'file:';
+        const isGitHubPages = window.location.hostname.includes('github.io') || window.location.hostname.includes('githubusercontent.com');
+
+        if (!isFileProtocol && !isGitHubPages) return;
+
         const path = window.location.pathname;
         const isRoot = !(/\/(en|fr|dev|restaurants|retailers|news|blog|shops|shop-details|project)\//.test(path));
         if (!isRoot) return;
@@ -69,7 +73,7 @@
             logoLink.href = 'index.html';
         }
 
-        // Rewrite absolute paths starting with "/" to relative for file protocol
+        // Rewrite absolute paths starting with "/" to relative for file protocol or GitHub Pages
         const absNodes = document.querySelectorAll('#header-placeholder a[href^="/"], #header-placeholder img[src^="/"], #footer-placeholder a[href^="/"], #footer-placeholder img[src^="/"]');
         absNodes.forEach(el => {
             if (el.hasAttribute('href')) {
@@ -136,16 +140,17 @@
 
         try {
             const isFileProtocol = window.location.protocol === 'file:';
+            const isGitHubPages = window.location.hostname.includes('github.io') || window.location.hostname.includes('githubusercontent.com');
 
-            if (isFileProtocol) {
-                // Offline/local file fallback: load pre-bundled include strings
+            if (isFileProtocol || isGitHubPages) {
+                // Offline/local file fallback or GitHub Pages: load pre-bundled include strings
                 // Decide relative path to the data bundle
                 const assetsBase = isInSubdirectory ? '../assets/js/' : 'assets/js/';
                 if (!window.__INCLUDES) {
                     try {
                         await loadScript(`${assetsBase}includes.data.js`);
                     } catch (e) {
-                        console.error('Failed to load includes.data.js for file:// fallback', e);
+                        console.error('Failed to load includes.data.js for fallback', e);
                     }
                 }
 
@@ -159,7 +164,7 @@
                 if (footerPlaceholder && footerHTML) footerPlaceholder.innerHTML = footerHTML;
 
             } else {
-                // Normal fetch path for http/https
+                // Normal fetch path for http/https (local server)
                 // Load header
                 const headerResponse = await fetch(`${basePath}header-${lang}.html`);
                 if (headerResponse.ok) {
@@ -185,8 +190,8 @@
             if (isInSubdirectory) {
                 fixPathsForSubdirectory();
             }
-            // Additional fix when opening locally at root
-            fixPathsForFileProtocolRoot();
+            // Additional fix when opening locally at root or on GitHub Pages
+            fixPathsForRootPages();
 
             // Re-initialize scripts that depend on header/footer elements
             if (window.initHeaderFooterScripts) {

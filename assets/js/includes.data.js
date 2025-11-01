@@ -8,8 +8,8 @@
     <div class="container">
         <div class="header-container">
             <div class="logo">
-                <a href="/" id="logo-link">
-                    <img src="/assets/images/logo.png" alt="長期熟成酒研究会 - Reserve Sake Association" class="logo-image"
+                <a href="index.html" id="logo-link">
+                    <img src="assets/images/logo.png" alt="長期熟成酒研究会 - Reserve Sake Association" class="logo-image"
                         id="logo-image">
                     <span class="logo-text">長期熟成酒研究会</span>
                 </a>
@@ -63,12 +63,12 @@
                             <li><a href="#society-members">会員</a></li>
                         </ul>
                     </li>
-                    <li><a href="../news/index.html" class="nav-link">お知らせ</a></li>
-                    <li><a href="../shops/index.html" class="nav-link">飲食店・販売店</a></li>
-                    <li><a href="../blog/index.html" class="nav-link">古酒を愉しむ</a></li>
+                    <li><a href="news/index.html" class="nav-link">お知らせ</a></li>
+                    <li><a href="shops/index.html" class="nav-link">飲食店・販売店</a></li>
+                    <li><a href="blog/index.html" class="nav-link">古酒を愉しむ</a></li>
                     <li><a href="#100year-project" class="nav-link">百年貯蔵プロジェクト</a></li>
                     <li><a href="#contact" class="nav-link">お問い合わせ</a></li>
-                    <li><a href="../privacy.html" class="nav-link">プライバシーポリシー</a></li>
+                    <li><a href="privacy.html" class="nav-link">プライバシーポリシー</a></li>
                 </ul>
 
                 <!-- SNS Links in Menu -->
@@ -156,8 +156,8 @@
     <div class="container">
         <div class="header-container">
             <div class="logo">
-                <a href="/en/" id="logo-link">
-                    <img src="/assets/images/logo.png" alt="Reserve Sake Association - 長期熟成酒研究会" class="logo-image"
+                <a href="en/index.html" id="logo-link">
+                    <img src="assets/images/logo.png" alt="Reserve Sake Association - 長期熟成酒研究会" class="logo-image"
                         id="logo-image">
                     <span class="logo-text">長期熟成酒研究会</span>
                 </a>
@@ -211,12 +211,12 @@
                             <li><a href="#society-members">Members</a></li>
                         </ul>
                     </li>
-                    <li><a href="../news/index.html" class="nav-link">News</a></li>
-                    <li><a href="../shops/index.html" class="nav-link">Where to Find</a></li>
-                    <li><a href="../blog/index.html" class="nav-link">Articles</a></li>
+                    <li><a href="news/index.html" class="nav-link">News</a></li>
+                    <li><a href="shops/index.html" class="nav-link">Where to Find</a></li>
+                    <li><a href="blog/index.html" class="nav-link">Articles</a></li>
                     <li><a href="#100year-project" class="nav-link">100-Year Project</a></li>
                     <li><a href="#contact" class="nav-link">Contact</a></li>
-                    <li><a href="../privacy.html" class="nav-link">Privacy Policy</a></li>
+                    <li><a href="privacy.html" class="nav-link">Privacy Policy</a></li>
                 </ul>
 
                 <!-- SNS Links in Menu -->
@@ -304,8 +304,8 @@
     <div class="container">
         <div class="header-container">
             <div class="logo">
-                <a href="/fr/" id="logo-link">
-                    <img src="/assets/images/logo.png" alt="L’Association du Saké maturé - 長期熟成酒研究会" class="logo-image"
+                <a href="fr/index.html" id="logo-link">
+                    <img src="assets/images/logo.png" alt="L'Association du Saké maturé - 長期熟成酒研究会" class="logo-image"
                         id="logo-image">
                     <span class="logo-text">長期熟成酒研究会</span>
                 </a>
@@ -359,12 +359,12 @@
                             <li><a href="#society-members">Membres</a></li>
                         </ul>
                     </li>
-                    <li><a href="../news/index.html" class="nav-link">Actualités</a></li>
-                    <li><a href="../shops/index.html" class="nav-link">Où Trouver</a></li>
-                    <li><a href="../blog/index.html" class="nav-link">Articles</a></li>
+                    <li><a href="news/index.html" class="nav-link">Actualités</a></li>
+                    <li><a href="shops/index.html" class="nav-link">Où Trouver</a></li>
+                    <li><a href="blog/index.html" class="nav-link">Articles</a></li>
                     <li><a href="#100year-project" class="nav-link">Projet 100 Ans</a></li>
                     <li><a href="#contact" class="nav-link">Contact</a></li>
-                    <li><a href="../privacy.html" class="nav-link">Politique de Confidentialité</a></li>
+                    <li><a href="privacy.html" class="nav-link">Politique de Confidentialité</a></li>
                 </ul>
 
                 <!-- SNS Links in Menu -->
