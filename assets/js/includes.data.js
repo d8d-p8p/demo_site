@@ -2,9 +2,7 @@
 // This file is auto-loaded by includes.js when running under file protocol.
 (function(){
   'use strict';
-  console.log('📦 includes.data.js loading...');
   if (!window.__INCLUDES) window.__INCLUDES = {};
-  console.log('📦 __INCLUDES object initialized');
   window.__INCLUDES['header-ja'] = `<!-- Header -->
 <header class="header" id="header">
     <div class="container">
@@ -448,7 +446,4 @@
         <path d="M12 19V5M5 12l7-7 7 7" />
     </svg>
 </button>`;
-
-  console.log('📦 includes.data.js loaded successfully');
-  console.log('📦 Available includes:', Object.keys(window.__INCLUDES));
 })();
