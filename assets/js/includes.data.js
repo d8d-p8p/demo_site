@@ -156,7 +156,7 @@
     <div class="container">
         <div class="header-container">
             <div class="logo">
-                <a href="en/index.html" id="logo-link">
+                <a href="en/" id="logo-link">
                     <img src="assets/images/logo.png" alt="Reserve Sake Association - 長期熟成酒研究会" class="logo-image"
                         id="logo-image">
                     <span class="logo-text">長期熟成酒研究会</span>
@@ -304,7 +304,7 @@
     <div class="container">
         <div class="header-container">
             <div class="logo">
-                <a href="fr/index.html" id="logo-link">
+                <a href="fr/" id="logo-link">
                     <img src="assets/images/logo.png" alt="L'Association du Saké maturé - 長期熟成酒研究会" class="logo-image"
                         id="logo-image">
                     <span class="logo-text">長期熟成酒研究会</span>

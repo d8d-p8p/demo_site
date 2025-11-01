@@ -637,10 +637,10 @@ function switchLanguage(lang) {
 
         if (lang === 'ja') {
             // Japanese lives at project root
-            window.location.href = `${up}index.html${hash}`;
+            window.location.href = `${up}${hash}`;
         } else {
             // en/fr live under their own folder
-            window.location.href = `${up}${lang}/index.html${hash}`;
+            window.location.href = `${up}${lang}/${hash}`;
         }
         return;
     }
@@ -707,6 +707,15 @@ function switchLanguage(lang) {
 
     // Clean up double slashes
     newPathname = newPathname.replace(/\/+/g, '/');
+
+    // Ensure we never end up with '/en/index.html' style paths in HTTP mode
+    newPathname = newPathname.replace(/\/index\.html\/?$/, '/');
+    // Also clean any '/lang/index.html' occurring mid-build (defensive)
+    newPathname = newPathname.replace(/\/(en|fr)\/index\.html(\/)?/g, '/$1/');
+    // Ensure trailing slash for directories
+    if (!newPathname.endsWith('/') && !newPathname.match(/\.[a-zA-Z0-9]+$/)) {
+        newPathname += '/';
+    }
 
     console.log('Language switch debug:');
     console.log('Is GitHub Pages:', isGitHubPages);

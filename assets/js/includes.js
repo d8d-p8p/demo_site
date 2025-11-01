@@ -6,14 +6,14 @@
     function fixPathsForSubdirectory() {
         const path = window.location.pathname;
         let lang = 'ja';
-        let homeUrl = '../index.html';
+        let homeUrl = '../';
 
         if (path.includes('/en/')) {
             lang = 'en';
-            homeUrl = '../en/index.html';
+            homeUrl = '../en/';
         } else if (path.includes('/fr/')) {
             lang = 'fr';
-            homeUrl = '../fr/index.html';
+            homeUrl = '../fr/';
         }
 
         // Fix logo link
@@ -67,10 +67,10 @@
         const isRoot = !(/\/(en|fr|dev|restaurants|retailers|news|blog|shops|shop-details|project)\//.test(path));
         if (!isRoot) return;
 
-        // Ensure logo points to index.html
+        // Ensure logo points to root directory
         const logoLink = document.getElementById('logo-link');
         if (logoLink) {
-            logoLink.href = 'index.html';
+            logoLink.href = './';
         }
 
         // Rewrite absolute paths starting with "/" to relative for file protocol or GitHub Pages
@@ -218,6 +218,30 @@
                 console.log('✅ Footer inserted successfully');
             } else {
                 console.error('❌ Footer not inserted. Placeholder:', !!footerPlaceholder, 'HTML:', !!footerHTML);
+            }
+
+            // Normalize any links that end with index.html to directory-style paths
+            try {
+                const fixIndexLinks = () => {
+                    const linkNodes = document.querySelectorAll('#header-placeholder a[href], #footer-placeholder a[href]');
+                    linkNodes.forEach(link => {
+                        const href = link.getAttribute('href');
+                        if (!href) return;
+                        const m = href.match(/^(.*)index\.html(\/?)(#.*)?$/);
+                        if (m) {
+                            let base = m[1] || '';
+                            const hash = m[3] || '';
+                            if (base && !base.endsWith('/')) base += '/';
+                            // Edge: plain 'index.html' => './'
+                            if (!base) base = './';
+                            link.setAttribute('href', base + hash);
+                        }
+                    });
+                };
+                fixIndexLinks();
+                console.log('🔧 Normalized index.html links to directory-style URLs');
+            } catch (e) {
+                console.warn('Link normalization failed:', e);
             }
 
             // Fix paths after insertion
