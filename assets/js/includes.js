@@ -48,6 +48,59 @@
             const href = link.getAttribute('href');
             link.href = homeUrl + href;
         });
+
+        // Fix footer privacy link path (only one privacy.html at site root)
+        const privacyLinks = document.querySelectorAll('.footer-nav a[href$="privacy.html"]');
+        privacyLinks.forEach(link => {
+            link.href = '../privacy.html';
+        });
+    }
+
+    // Additional fix for file:// protocol on root pages
+    function fixPathsForFileProtocolRoot() {
+        if (window.location.protocol !== 'file:') return;
+        const path = window.location.pathname;
+        const isRoot = !(/\/(en|fr|dev|restaurants|retailers|news|blog|shops|shop-details|project)\//.test(path));
+        if (!isRoot) return;
+
+        // Ensure logo points to index.html
+        const logoLink = document.getElementById('logo-link');
+        if (logoLink) {
+            logoLink.href = 'index.html';
+        }
+
+        // Rewrite absolute paths starting with "/" to relative for file protocol
+        const absNodes = document.querySelectorAll('#header-placeholder a[href^="/"], #header-placeholder img[src^="/"], #footer-placeholder a[href^="/"], #footer-placeholder img[src^="/"]');
+        absNodes.forEach(el => {
+            if (el.hasAttribute('href')) {
+                el.setAttribute('href', el.getAttribute('href').replace(/^\//, ''));
+            }
+            if (el.hasAttribute('src')) {
+                el.setAttribute('src', el.getAttribute('src').replace(/^\//, ''));
+            }
+        });
+
+        // Normalize leading ../ on root
+        const relUpNodes = document.querySelectorAll('#header-placeholder a[href^="../"], #footer-placeholder a[href^="../"], #header-placeholder img[src^="../"], #footer-placeholder img[src^="../"]');
+        relUpNodes.forEach(el => {
+            if (el.hasAttribute('href')) {
+                el.setAttribute('href', el.getAttribute('href').replace(/^\.\.\//, ''));
+            }
+            if (el.hasAttribute('src')) {
+                el.setAttribute('src', el.getAttribute('src').replace(/^\.\.\//, ''));
+            }
+        });
+    }
+
+    // Helper: dynamically load a script file and wait until it's loaded
+    function loadScript(src) {
+        return new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = src;
+            s.onload = () => resolve();
+            s.onerror = (e) => reject(e);
+            document.head.appendChild(s);
+        });
     }
 
     // Function to load HTML includes
@@ -82,23 +135,49 @@
         }
 
         try {
-            // Load header
-            const headerResponse = await fetch(`${basePath}header-${lang}.html`);
-            if (headerResponse.ok) {
-                const headerHTML = await headerResponse.text();
-                const headerPlaceholder = document.getElementById('header-placeholder');
-                if (headerPlaceholder) {
-                    headerPlaceholder.innerHTML = headerHTML;
-                }
-            }
+            const isFileProtocol = window.location.protocol === 'file:';
 
-            // Load footer
-            const footerResponse = await fetch(`${basePath}footer-${lang}.html`);
-            if (footerResponse.ok) {
-                const footerHTML = await footerResponse.text();
+            if (isFileProtocol) {
+                // Offline/local file fallback: load pre-bundled include strings
+                // Decide relative path to the data bundle
+                const assetsBase = isInSubdirectory ? '../assets/js/' : 'assets/js/';
+                if (!window.__INCLUDES) {
+                    try {
+                        await loadScript(`${assetsBase}includes.data.js`);
+                    } catch (e) {
+                        console.error('Failed to load includes.data.js for file:// fallback', e);
+                    }
+                }
+
+                const headerHTML = window.__INCLUDES?.[`header-${lang}`] || '';
+                const footerHTML = window.__INCLUDES?.[`footer-${lang}`] || '';
+
+                const headerPlaceholder = document.getElementById('header-placeholder');
                 const footerPlaceholder = document.getElementById('footer-placeholder');
-                if (footerPlaceholder) {
-                    footerPlaceholder.innerHTML = footerHTML;
+
+                if (headerPlaceholder && headerHTML) headerPlaceholder.innerHTML = headerHTML;
+                if (footerPlaceholder && footerHTML) footerPlaceholder.innerHTML = footerHTML;
+
+            } else {
+                // Normal fetch path for http/https
+                // Load header
+                const headerResponse = await fetch(`${basePath}header-${lang}.html`);
+                if (headerResponse.ok) {
+                    const headerHTML = await headerResponse.text();
+                    const headerPlaceholder = document.getElementById('header-placeholder');
+                    if (headerPlaceholder) {
+                        headerPlaceholder.innerHTML = headerHTML;
+                    }
+                }
+
+                // Load footer
+                const footerResponse = await fetch(`${basePath}footer-${lang}.html`);
+                if (footerResponse.ok) {
+                    const footerHTML = await footerResponse.text();
+                    const footerPlaceholder = document.getElementById('footer-placeholder');
+                    if (footerPlaceholder) {
+                        footerPlaceholder.innerHTML = footerHTML;
+                    }
                 }
             }
 
@@ -106,6 +185,8 @@
             if (isInSubdirectory) {
                 fixPathsForSubdirectory();
             }
+            // Additional fix when opening locally at root
+            fixPathsForFileProtocolRoot();
 
             // Re-initialize scripts that depend on header/footer elements
             if (window.initHeaderFooterScripts) {

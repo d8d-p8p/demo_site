@@ -624,37 +624,48 @@ function switchLanguage(lang) {
 
     if (currentLang === lang) return;
 
-    // Use URL to preserve search and hash
-    const url = new URL(window.location.href);
-    const pathname = url.pathname; // e.g. "/en/index.html" or "/en/" or "/"
-    const hadTrailingSlash = pathname.endsWith('/');
+    const isFile = window.location.protocol === 'file:';
+    if (isFile) {
+        // Local file mode: avoid absolute paths like "/en/" which resolve to file:///en/
+        const p = window.location.pathname;
+        const inLangDir = /\/(en|fr)\//.test(p);
+        const inSubdir = /\/(blog|news|shops|project|dev|restaurants|retailers)\//.test(p) || inLangDir;
+        const up = inSubdir ? '../' : '';
 
-    // Split path into segments and handle language as the first segment when present.
-    // Note: Japanese ('ja') is served from the root (no '/ja/' folder),
-    // so switching TO 'ja' must remove an existing language segment instead of adding '/ja/'.
-    const segments = pathname.split('/').filter(Boolean); // removes empty strings
-    const supportedLangs = ['en', 'fr']; // languages that use a prefix
+        // Preserve hash if current page has one
+        const hash = window.location.hash || '';
+
+        if (lang === 'ja') {
+            // Japanese lives at project root
+            window.location.href = `${up}index.html${hash}`;
+        } else {
+            // en/fr live under their own folder
+            window.location.href = `${up}${lang}/index.html${hash}`;
+        }
+        return;
+    }
+
+    // HTTP/HTTPS mode: keep absolute root-based paths
+    const url = new URL(window.location.href);
+    const pathname = url.pathname;
+    const hadTrailingSlash = pathname.endsWith('/');
+    const segments = pathname.split('/').filter(Boolean);
+    const supportedLangs = ['en', 'fr'];
     let newPathname = '';
 
     if (segments.length > 0 && supportedLangs.includes(segments[0])) {
-        // Current path has a language prefix (en/fr)
         if (lang === 'ja') {
-            // Remove the language prefix to map to root-based Japanese pages
             segments.shift();
             newPathname = '/' + segments.join('/');
             if (hadTrailingSlash || newPathname === '/') newPathname = newPathname.endsWith('/') ? newPathname : newPathname + '/';
-            // If result is just '/', keep as '/'
             if (newPathname === '//') newPathname = '/';
         } else {
-            // Replace existing language prefix with target (en/fr)
             segments[0] = lang;
             newPathname = '/' + segments.join('/');
             if (hadTrailingSlash) newPathname += '/';
         }
     } else {
-        // No language prefix in path (assumed Japanese/root)
         if (lang === 'ja') {
-            // Already Japanese-root path
             if (pathname === '/' || pathname === '/index.html') {
                 newPathname = '/';
             } else {
@@ -662,18 +673,15 @@ function switchLanguage(lang) {
                 if (hadTrailingSlash && !newPathname.endsWith('/')) newPathname += '/';
             }
         } else {
-            // Prefix the existing path with the target language
             if (pathname === '/' || pathname === '/index.html') {
                 newPathname = `/${lang}/`;
             } else {
                 newPathname = '/' + lang + (pathname.startsWith('/') ? pathname : '/' + pathname);
             }
         }
-        // Normalize double slashes
         newPathname = newPathname.replace(/\/+/g, '/');
     }
 
-    // Preserve search and hash
     const newUrl = newPathname + url.search + url.hash;
     window.location.href = newUrl;
 }
