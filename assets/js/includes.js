@@ -107,6 +107,155 @@
         });
     }
 
+    // Language switcher functionality
+    function initLanguageSwitcher() {
+        console.log('🌐 Initializing language switcher...');
+
+        const languageToggle = document.getElementById('languageToggle');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const languageOptions = document.querySelectorAll('.language-option');
+
+        if (!languageToggle || !languageDropdown) {
+            console.warn('❌ Language switcher elements not found');
+            return;
+        }
+
+        console.log('🌐 Language switcher elements found');
+
+        // Toggle dropdown
+        languageToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            languageDropdown.classList.toggle('active');
+            console.log('🌐 Language dropdown toggled');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!languageToggle.contains(e.target) && !languageDropdown.contains(e.target)) {
+                languageDropdown.classList.remove('active');
+            }
+        });
+
+        // Handle language selection
+        languageOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.preventDefault();
+                const selectedLang = option.getAttribute('data-lang');
+                console.log('🌐 Language selected:', selectedLang);
+
+                // Switch language
+                switchLanguage(selectedLang);
+
+                // Close dropdown
+                languageDropdown.classList.remove('active');
+            });
+        });
+
+        console.log('🌐 Language switcher initialized successfully');
+    }
+
+    // Switch language function
+    function switchLanguage(targetLang) {
+        console.log('🌐 Switching to language:', targetLang);
+
+        const currentPath = window.location.pathname;
+        const currentSearch = window.location.search;
+        const currentHash = window.location.hash;
+
+        console.log('🌐 Current path:', currentPath);
+
+        // For GitHub Pages, extract repository name if present
+        const isGitHubPages = window.location.hostname.includes('github.io');
+        let basePath = '';
+        let relativePath = currentPath;
+
+        if (isGitHubPages) {
+            const pathParts = currentPath.split('/').filter(part => part);
+            if (pathParts.length > 0) {
+                basePath = '/' + pathParts[0]; // Repository name
+                relativePath = '/' + pathParts.slice(1).join('/');
+                if (!relativePath.endsWith('/') && !relativePath.includes('.')) {
+                    relativePath += '/';
+                }
+            }
+        }
+
+        console.log('🌐 Base path:', basePath);
+        console.log('🌐 Relative path:', relativePath);
+
+        let newPath = '';
+
+        // Determine current language and create new path
+        if (relativePath.includes('/en/')) {
+            // Currently in English
+            if (targetLang === 'ja') {
+                newPath = relativePath.replace('/en/', '/');
+            } else if (targetLang === 'fr') {
+                newPath = relativePath.replace('/en/', '/fr/');
+            } else {
+                return; // Same language, no change needed
+            }
+        } else if (relativePath.includes('/fr/')) {
+            // Currently in French
+            if (targetLang === 'ja') {
+                newPath = relativePath.replace('/fr/', '/');
+            } else if (targetLang === 'en') {
+                newPath = relativePath.replace('/fr/', '/en/');
+            } else {
+                return; // Same language, no change needed
+            }
+        } else {
+            // Currently in Japanese (root)
+            if (targetLang === 'en') {
+                // Handle root index.html specially
+                if (relativePath.endsWith('/') || relativePath.endsWith('/index.html') || relativePath === '/') {
+                    newPath = '/en/index.html';
+                } else {
+                    newPath = '/en' + relativePath;
+                }
+            } else if (targetLang === 'fr') {
+                // Handle root index.html specially
+                if (relativePath.endsWith('/') || relativePath.endsWith('/index.html') || relativePath === '/') {
+                    newPath = '/fr/index.html';
+                } else {
+                    newPath = '/fr' + relativePath;
+                }
+            } else {
+                return; // Same language, no change needed
+            }
+        }
+
+        // Combine base path for GitHub Pages
+        if (isGitHubPages && basePath) {
+            newPath = basePath + newPath;
+        }
+
+        // Handle GitHub Pages path resolution
+        const isGitHubPagesEnv = window.location.hostname.includes('github.io');
+        if (isGitHubPagesEnv) {
+            // For GitHub Pages, we need to handle the repository name in the path
+            const repoName = window.location.pathname.split('/')[1] || '';
+
+            if (newPath.startsWith('/')) {
+                if (repoName && !newPath.startsWith(`/${repoName}/`)) {
+                    newPath = `/${repoName}${newPath}`;
+                }
+            } else {
+                // If it's a relative path, make it work from current location
+                const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+                newPath = basePath + newPath;
+            }
+        }
+
+        if (newPath) {
+            const fullNewUrl = newPath + currentSearch + currentHash;
+            console.log('🌐 Redirecting to:', fullNewUrl);
+            window.location.href = fullNewUrl;
+        } else {
+            console.warn('🌐 Could not determine new path for language:', targetLang);
+        }
+    }
+
     // Function to load HTML includes
     async function loadIncludes() {
         // Determine current language from URL
@@ -139,88 +288,49 @@
         }
 
         try {
-            const isFileProtocol = window.location.protocol === 'file:';
-            const isGitHubPages = window.location.hostname.includes('github.io') ||
-                                 window.location.hostname.includes('githubusercontent.com') ||
-                                 window.location.hostname.endsWith('.github.io');
+            // For simplicity and reliability, always use includes.data.js
+            // This avoids issues with GitHub Pages, CORS, and file protocols
+            console.log('🔧 Loading includes from data file...');
 
-            // Always use includes.data.js for GitHub Pages or file protocol
-            // Only use fetch for local development servers
-            const useDataFile = isFileProtocol || isGitHubPages || !window.location.hostname.includes('localhost');
+            // Load pre-bundled include strings from includes.data.js
+            const assetsBase = isInSubdirectory ? '../assets/js/' : 'assets/js/';
+            console.log('🔧 Assets base path:', assetsBase);
 
-            if (useDataFile) {
-                // Load pre-bundled include strings from includes.data.js
-                const assetsBase = isInSubdirectory ? '../assets/js/' : 'assets/js/';
-                if (!window.__INCLUDES) {
-                    try {
-                        await loadScript(`${assetsBase}includes.data.js`);
-                    } catch (e) {
-                        console.error('Failed to load includes.data.js', e);
-                        return; // Exit if we can't load the data file
-                    }
-                }
-
-                const headerHTML = window.__INCLUDES?.[`header-${lang}`] || '';
-                const footerHTML = window.__INCLUDES?.[`footer-${lang}`] || '';
-
-                const headerPlaceholder = document.getElementById('header-placeholder');
-                const footerPlaceholder = document.getElementById('footer-placeholder');
-
-                if (headerPlaceholder && headerHTML) {
-                    headerPlaceholder.innerHTML = headerHTML;
-                } else {
-                    console.warn(`Header not loaded. Placeholder: ${!!headerPlaceholder}, HTML: ${!!headerHTML}`);
-                }
-
-                if (footerPlaceholder && footerHTML) {
-                    footerPlaceholder.innerHTML = footerHTML;
-                } else {
-                    console.warn(`Footer not loaded. Placeholder: ${!!footerPlaceholder}, HTML: ${!!footerHTML}`);
-                }
-
-            } else {
-                // Normal fetch path for local development server
+            if (!window.__INCLUDES) {
                 try {
-                    // Load header
-                    const headerResponse = await fetch(`${basePath}header-${lang}.html`);
-                    if (headerResponse.ok) {
-                        const headerHTML = await headerResponse.text();
-                        const headerPlaceholder = document.getElementById('header-placeholder');
-                        if (headerPlaceholder) {
-                            headerPlaceholder.innerHTML = headerHTML;
-                        }
-                    } else {
-                        console.warn(`Failed to fetch header: ${headerResponse.status}`);
-                    }
-
-                    // Load footer
-                    const footerResponse = await fetch(`${basePath}footer-${lang}.html`);
-                    if (footerResponse.ok) {
-                        const footerHTML = await footerResponse.text();
-                        const footerPlaceholder = document.getElementById('footer-placeholder');
-                        if (footerPlaceholder) {
-                            footerPlaceholder.innerHTML = footerHTML;
-                        }
-                    } else {
-                        console.warn(`Failed to fetch footer: ${footerResponse.status}`);
-                    }
-                } catch (fetchError) {
-                    console.error('Fetch failed, falling back to data file:', fetchError);
-                    // Fallback to data file if fetch fails
-                    const assetsBase = isInSubdirectory ? '../assets/js/' : 'assets/js/';
-                    if (!window.__INCLUDES) {
-                        await loadScript(`${assetsBase}includes.data.js`);
-                    }
-
-                    const headerHTML = window.__INCLUDES?.[`header-${lang}`] || '';
-                    const footerHTML = window.__INCLUDES?.[`footer-${lang}`] || '';
-
-                    const headerPlaceholder = document.getElementById('header-placeholder');
-                    const footerPlaceholder = document.getElementById('footer-placeholder');
-
-                    if (headerPlaceholder && headerHTML) headerPlaceholder.innerHTML = headerHTML;
-                    if (footerPlaceholder && footerHTML) footerPlaceholder.innerHTML = footerHTML;
+                    console.log('🔧 Loading script:', `${assetsBase}includes.data.js`);
+                    await loadScript(`${assetsBase}includes.data.js`);
+                    console.log('🔧 Script loaded successfully');
+                } catch (e) {
+                    console.error('❌ Failed to load includes.data.js', e);
+                    return; // Exit if we can't load the data file
                 }
+            }
+
+            console.log('🔧 __INCLUDES available:', !!window.__INCLUDES);
+            console.log('🔧 Available keys:', window.__INCLUDES ? Object.keys(window.__INCLUDES) : 'none');
+
+            const headerHTML = window.__INCLUDES?.[`header-${lang}`] || '';
+            const footerHTML = window.__INCLUDES?.[`footer-${lang}`] || '';
+
+            console.log('🔧 Header HTML length:', headerHTML.length);
+            console.log('🔧 Footer HTML length:', footerHTML.length);
+
+            const headerPlaceholder = document.getElementById('header-placeholder');
+            const footerPlaceholder = document.getElementById('footer-placeholder');
+
+            if (headerPlaceholder && headerHTML) {
+                headerPlaceholder.innerHTML = headerHTML;
+                console.log('✅ Header loaded successfully');
+            } else {
+                console.warn(`❌ Header not loaded. Placeholder: ${!!headerPlaceholder}, HTML: ${!!headerHTML}`);
+            }
+
+            if (footerPlaceholder && footerHTML) {
+                footerPlaceholder.innerHTML = footerHTML;
+                console.log('✅ Footer loaded successfully');
+            } else {
+                console.warn(`❌ Footer not loaded. Placeholder: ${!!footerPlaceholder}, HTML: ${!!footerHTML}`);
             }
 
             // Fix paths for subdirectories
@@ -229,6 +339,9 @@
             }
             // Additional fix when opening locally at root or on GitHub Pages
             fixPathsForRootPages();
+
+            // Initialize language switcher functionality
+            initLanguageSwitcher();
 
             // Re-initialize scripts that depend on header/footer elements
             if (window.initHeaderFooterScripts) {
