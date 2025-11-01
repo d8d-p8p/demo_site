@@ -107,42 +107,55 @@
         });
     }
 
-    // Function to get the base path for GitHub Pages and relative path for assets
-    function getBasePath() {
-        const isGitHubPages = window.location.hostname.includes('github.io');
-        if (isGitHubPages) {
-            const pathSegments = window.location.pathname.split('/').filter(s => s);
-            if (pathSegments.length > 0) {
-                // GitHub Pages path typically starts with /repository-name/
-                return `/${pathSegments[0]}/`;
+
+
+    // Function to try loading script from multiple possible paths
+    async function tryLoadScriptFromPaths(possiblePaths) {
+        for (const path of possiblePaths) {
+            try {
+                console.log('Trying to load includes.data.js from:', path);
+                await loadScript(path);
+                console.log('Successfully loaded includes.data.js from:', path);
+                return true;
+            } catch (e) {
+                console.warn('Failed to load from:', path, e);
             }
         }
-        return '/';
+        return false;
     }
 
-    // Function to calculate relative path to assets from current page
-    function getRelativeAssetsPath() {
-        const path = window.location.pathname;
+    // Function to get all possible asset paths
+    function getPossibleAssetPaths() {
+        const currentPath = window.location.pathname;
         const isGitHubPages = window.location.hostname.includes('github.io');
 
-        // Count depth from root (excluding repository name on GitHub Pages)
-        let pathSegments = path.split('/').filter(s => s);
+        // Generate multiple possible paths
+        const paths = [];
 
-        if (isGitHubPages && pathSegments.length > 0) {
-            // Remove repository name from path calculation
-            pathSegments = pathSegments.slice(1);
+        // For GitHub Pages root
+        if (isGitHubPages) {
+            const pathSegments = currentPath.split('/').filter(s => s);
+            if (pathSegments.length > 0) {
+                const repoName = pathSegments[0];
+                paths.push(`/${repoName}/assets/js/includes.data.js`);
+            }
         }
 
-        // If we're at root level (index.html), use current directory
-        if (pathSegments.length === 0 || pathSegments[pathSegments.length - 1].endsWith('.html')) {
-            pathSegments.pop(); // Remove filename if present
+        // Standard relative paths
+        paths.push('assets/js/includes.data.js');        // Root level
+        paths.push('./assets/js/includes.data.js');      // Explicit current directory
+        paths.push('../assets/js/includes.data.js');     // One level up
+        paths.push('../../assets/js/includes.data.js');  // Two levels up
+
+        // Absolute paths for GitHub Pages
+        if (isGitHubPages && currentPath.includes('/')) {
+            const segments = currentPath.split('/').filter(s => s);
+            if (segments.length > 1) {
+                paths.push(`/${segments[0]}/assets/js/includes.data.js`);
+            }
         }
 
-        // Calculate relative path depth
-        const depth = pathSegments.length;
-        const relativePath = depth > 0 ? '../'.repeat(depth) : '';
-
-        return relativePath;
+        return paths;
     }
 
     // Function to load HTML includes
@@ -157,176 +170,121 @@
             lang = 'fr';
         }
 
-        // Determine base path for includes
-        const basePath = getBasePath();
-        let includesPath = `${basePath}includes/`;
-
-        // Check if we're in a subdirectory
-        const isInSubdirectory = path.includes('/en/') ||
-                       path.includes('/fr/') ||
-                       path.includes('/dev/') ||
-                       path.includes('/restaurants/') ||
-                       path.includes('/retailers/') ||
-                       path.includes('/news/') ||
-                       path.includes('/blog/') ||
-                       path.includes('/shops/') ||
-                       path.includes('/shop-details/') ||
-                       path.includes('/project/');
-
-        if (isInSubdirectory) {
-            includesPath = '../includes/';
-        }
+        console.log('🔄 Loading includes for language:', lang);
+        console.log('Current path:', path);
 
         try {
-            const isFileProtocol = window.location.protocol === 'file:';
-            const isGitHubPages = window.location.hostname.includes('github.io') ||
-                                 window.location.hostname.includes('githubusercontent.com') ||
-                                 window.location.hostname.endsWith('.github.io');
+            // Always try to load includes.data.js first (most reliable for GitHub Pages)
+            if (!window.__INCLUDES) {
+                const possiblePaths = getPossibleAssetPaths();
+                console.log('Possible asset paths:', possiblePaths);
 
-            // Always use includes.data.js for GitHub Pages or file protocol
-            // Only use fetch for local development servers
-            const useDataFile = isFileProtocol || isGitHubPages || !window.location.hostname.includes('localhost');
+                const loaded = await tryLoadScriptFromPaths(possiblePaths);
 
-            if (useDataFile) {
-                // Load pre-bundled include strings from includes.data.js
-                const relativePath = getRelativeAssetsPath();
-                const assetsBase = `${relativePath}assets/js/`;
-
-                console.log('Relative path:', relativePath);
-                console.log('Loading includes.data.js from:', `${assetsBase}includes.data.js`);
-
-                if (!window.__INCLUDES) {
-                    try {
-                        await loadScript(`${assetsBase}includes.data.js`);
-                    } catch (e) {
-                        console.error('Failed to load includes.data.js', e);
-                        console.error('Attempted path:', `${assetsBase}includes.data.js`);
-                        console.error('Current page path:', window.location.pathname);
-                        console.error('Calculated relative path:', relativePath);
-                        return; // Exit if we can't load the data file
-                    }
-                }
-
-                const headerHTML = window.__INCLUDES?.[`header-${lang}`] || '';
-                const footerHTML = window.__INCLUDES?.[`footer-${lang}`] || '';
-
-                const headerPlaceholder = document.getElementById('header-placeholder');
-                const footerPlaceholder = document.getElementById('footer-placeholder');
-
-                if (headerPlaceholder && headerHTML) {
-                    headerPlaceholder.innerHTML = headerHTML;
-                } else {
-                    console.warn(`Header not loaded. Placeholder: ${!!headerPlaceholder}, HTML: ${!!headerHTML}`);
-                }
-
-                if (footerPlaceholder && footerHTML) {
-                    footerPlaceholder.innerHTML = footerHTML;
-                } else {
-                    console.warn(`Footer not loaded. Placeholder: ${!!footerPlaceholder}, HTML: ${!!footerHTML}`);
-                }
-
-            } else {
-                // Normal fetch path for local development server
-                try {
-                    // Load header
-                    const headerResponse = await fetch(`${includesPath}header-${lang}.html`);
-                    if (headerResponse.ok) {
-                        const headerHTML = await headerResponse.text();
-                        const headerPlaceholder = document.getElementById('header-placeholder');
-                        if (headerPlaceholder) {
-                            headerPlaceholder.innerHTML = headerHTML;
-                        }
-                    } else {
-                        console.warn(`Failed to fetch header: ${headerResponse.status}`);
-                    }
-
-                    // Load footer
-                    const footerResponse = await fetch(`${includesPath}footer-${lang}.html`);
-                    if (footerResponse.ok) {
-                        const footerHTML = await footerResponse.text();
-                        const footerPlaceholder = document.getElementById('footer-placeholder');
-                        if (footerPlaceholder) {
-                            footerPlaceholder.innerHTML = footerHTML;
-                        }
-                    } else {
-                        console.warn(`Failed to fetch footer: ${footerResponse.status}`);
-                    }
-                } catch (fetchError) {
-                    console.error('Fetch failed, falling back to data file:', fetchError);
-                    // Fallback to data file if fetch fails
-                    const relativePath = getRelativeAssetsPath();
-                    const assetsBase = `${relativePath}assets/js/`;
-
-                    if (!window.__INCLUDES) {
-                        await loadScript(`${assetsBase}includes.data.js`);
-                    }
-
-                    const headerHTML = window.__INCLUDES?.[`header-${lang}`] || '';
-                    const footerHTML = window.__INCLUDES?.[`footer-${lang}`] || '';
-
-                    const headerPlaceholder = document.getElementById('header-placeholder');
-                    const footerPlaceholder = document.getElementById('footer-placeholder');
-
-                    if (headerPlaceholder && headerHTML) headerPlaceholder.innerHTML = headerHTML;
-                    if (footerPlaceholder && footerHTML) footerPlaceholder.innerHTML = footerHTML;
+                if (!loaded) {
+                    console.error('❌ Failed to load includes.data.js from any path');
+                    console.error('Tried paths:', possiblePaths);
+                    return;
                 }
             }
 
-            // Fix paths for subdirectories
+            // Verify that __INCLUDES is now available
+            if (!window.__INCLUDES) {
+                console.error('❌ __INCLUDES still not available after script load');
+                return;
+            }
+
+            console.log('✅ __INCLUDES loaded successfully');
+            console.log('Available include keys:', Object.keys(window.__INCLUDES));
+
+            const headerHTML = window.__INCLUDES[`header-${lang}`] || '';
+            const footerHTML = window.__INCLUDES[`footer-${lang}`] || '';
+
+            console.log('Header HTML length:', headerHTML.length);
+            console.log('Footer HTML length:', footerHTML.length);
+
+            const headerPlaceholder = document.getElementById('header-placeholder');
+            const footerPlaceholder = document.getElementById('footer-placeholder');
+
+            if (headerPlaceholder && headerHTML) {
+                headerPlaceholder.innerHTML = headerHTML;
+                console.log('✅ Header inserted successfully');
+            } else {
+                console.error('❌ Header not inserted. Placeholder:', !!headerPlaceholder, 'HTML:', !!headerHTML);
+            }
+
+            if (footerPlaceholder && footerHTML) {
+                footerPlaceholder.innerHTML = footerHTML;
+                console.log('✅ Footer inserted successfully');
+            } else {
+                console.error('❌ Footer not inserted. Placeholder:', !!footerPlaceholder, 'HTML:', !!footerHTML);
+            }
+
+            // Fix paths after insertion
+            const isInSubdirectory = path.includes('/en/') ||
+                           path.includes('/fr/') ||
+                           path.includes('/news/') ||
+                           path.includes('/blog/') ||
+                           path.includes('/shops/') ||
+                           path.includes('/project/');
+
             if (isInSubdirectory) {
                 fixPathsForSubdirectory();
+                console.log('🔧 Applied subdirectory path fixes');
             }
-            // Additional fix when opening locally at root or on GitHub Pages
+
             fixPathsForRootPages();
+            console.log('🔧 Applied root page path fixes');
 
             // Re-initialize scripts that depend on header/footer elements
             if (window.initHeaderFooterScripts) {
                 window.initHeaderFooterScripts();
             }
+
         } catch (error) {
-            console.error('Error loading includes:', error);
+            console.error('❌ Error loading includes:', error);
         }
     }
 
     // Debug function to check if files are loading
     function debugLoadStatus() {
         const isGitHubPages = window.location.hostname.includes('github.io');
-        const basePath = getBasePath();
-        const relativePath = getRelativeAssetsPath();
 
-        console.log('🔍 Debug Info:');
-        console.log('Protocol:', window.location.protocol);
-        console.log('Hostname:', window.location.hostname);
-        console.log('Is GitHub Pages:', isGitHubPages);
-        console.log('Base Path:', basePath);
-        console.log('Relative Assets Path:', relativePath);
-        console.log('Calculated assets path:', `${relativePath}assets/js/includes.data.js`);
+        console.log('🔍 Final Debug Status:');
         console.log('Full URL:', window.location.href);
-        console.log('Path:', window.location.pathname);
-        console.log('Path segments:', window.location.pathname.split('/').filter(s => s));
+        console.log('Is GitHub Pages:', isGitHubPages);
         console.log('__INCLUDES loaded:', !!window.__INCLUDES);
         console.log('Available includes:', window.__INCLUDES ? Object.keys(window.__INCLUDES) : 'none');
-        console.log('CSS loaded:', !!document.querySelector('link[href*="style.css"]'));
-        console.log('AOS loaded:', typeof AOS !== 'undefined');
-        console.log('Header placeholder:', !!document.getElementById('header-placeholder'));
-        console.log('Footer placeholder:', !!document.getElementById('footer-placeholder'));
-        console.log('Main content exists:', !!document.querySelector('main'));
+        console.log('Header placeholder exists:', !!document.getElementById('header-placeholder'));
+        console.log('Footer placeholder exists:', !!document.getElementById('footer-placeholder'));
 
         // Check if header/footer content was actually loaded
         const headerContent = document.getElementById('header-placeholder')?.innerHTML;
         const footerContent = document.getElementById('footer-placeholder')?.innerHTML;
         console.log('Header content loaded:', headerContent ? headerContent.length + ' chars' : 'none');
         console.log('Footer content loaded:', footerContent ? footerContent.length + ' chars' : 'none');
+
+        // Final status
+        const success = !!(window.__INCLUDES && headerContent && footerContent);
+        console.log(success ? '✅ Includes loaded successfully!' : '❌ Includes failed to load');
     }
 
-    // Load includes when DOM is ready
+    // Load includes when DOM is ready with proper timing
+    function initializeIncludes() {
+        console.log('🚀 Initializing includes...');
+        console.log('Document ready state:', document.readyState);
+
+        // Add a small delay to ensure DOM is fully ready
+        setTimeout(async () => {
+            await loadIncludes();
+            // Wait a bit more before debugging to see final state
+            setTimeout(debugLoadStatus, 100);
+        }, 50);
+    }
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            loadIncludes();
-            debugLoadStatus();
-        });
+        document.addEventListener('DOMContentLoaded', initializeIncludes);
     } else {
-        loadIncludes();
-        debugLoadStatus();
+        initializeIncludes();
     }
 })();
