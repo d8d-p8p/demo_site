@@ -140,17 +140,23 @@
 
         try {
             const isFileProtocol = window.location.protocol === 'file:';
-            const isGitHubPages = window.location.hostname.includes('github.io') || window.location.hostname.includes('githubusercontent.com');
+            const isGitHubPages = window.location.hostname.includes('github.io') ||
+                                 window.location.hostname.includes('githubusercontent.com') ||
+                                 window.location.hostname.endsWith('.github.io');
 
-            if (isFileProtocol || isGitHubPages) {
-                // Offline/local file fallback or GitHub Pages: load pre-bundled include strings
-                // Decide relative path to the data bundle
+            // Always use includes.data.js for GitHub Pages or file protocol
+            // Only use fetch for local development servers
+            const useDataFile = isFileProtocol || isGitHubPages || !window.location.hostname.includes('localhost');
+
+            if (useDataFile) {
+                // Load pre-bundled include strings from includes.data.js
                 const assetsBase = isInSubdirectory ? '../assets/js/' : 'assets/js/';
                 if (!window.__INCLUDES) {
                     try {
                         await loadScript(`${assetsBase}includes.data.js`);
                     } catch (e) {
-                        console.error('Failed to load includes.data.js for fallback', e);
+                        console.error('Failed to load includes.data.js', e);
+                        return; // Exit if we can't load the data file
                     }
                 }
 
@@ -160,29 +166,60 @@
                 const headerPlaceholder = document.getElementById('header-placeholder');
                 const footerPlaceholder = document.getElementById('footer-placeholder');
 
-                if (headerPlaceholder && headerHTML) headerPlaceholder.innerHTML = headerHTML;
-                if (footerPlaceholder && footerHTML) footerPlaceholder.innerHTML = footerHTML;
-
-            } else {
-                // Normal fetch path for http/https (local server)
-                // Load header
-                const headerResponse = await fetch(`${basePath}header-${lang}.html`);
-                if (headerResponse.ok) {
-                    const headerHTML = await headerResponse.text();
-                    const headerPlaceholder = document.getElementById('header-placeholder');
-                    if (headerPlaceholder) {
-                        headerPlaceholder.innerHTML = headerHTML;
-                    }
+                if (headerPlaceholder && headerHTML) {
+                    headerPlaceholder.innerHTML = headerHTML;
+                } else {
+                    console.warn(`Header not loaded. Placeholder: ${!!headerPlaceholder}, HTML: ${!!headerHTML}`);
                 }
 
-                // Load footer
-                const footerResponse = await fetch(`${basePath}footer-${lang}.html`);
-                if (footerResponse.ok) {
-                    const footerHTML = await footerResponse.text();
-                    const footerPlaceholder = document.getElementById('footer-placeholder');
-                    if (footerPlaceholder) {
-                        footerPlaceholder.innerHTML = footerHTML;
+                if (footerPlaceholder && footerHTML) {
+                    footerPlaceholder.innerHTML = footerHTML;
+                } else {
+                    console.warn(`Footer not loaded. Placeholder: ${!!footerPlaceholder}, HTML: ${!!footerHTML}`);
+                }
+
+            } else {
+                // Normal fetch path for local development server
+                try {
+                    // Load header
+                    const headerResponse = await fetch(`${basePath}header-${lang}.html`);
+                    if (headerResponse.ok) {
+                        const headerHTML = await headerResponse.text();
+                        const headerPlaceholder = document.getElementById('header-placeholder');
+                        if (headerPlaceholder) {
+                            headerPlaceholder.innerHTML = headerHTML;
+                        }
+                    } else {
+                        console.warn(`Failed to fetch header: ${headerResponse.status}`);
                     }
+
+                    // Load footer
+                    const footerResponse = await fetch(`${basePath}footer-${lang}.html`);
+                    if (footerResponse.ok) {
+                        const footerHTML = await footerResponse.text();
+                        const footerPlaceholder = document.getElementById('footer-placeholder');
+                        if (footerPlaceholder) {
+                            footerPlaceholder.innerHTML = footerHTML;
+                        }
+                    } else {
+                        console.warn(`Failed to fetch footer: ${footerResponse.status}`);
+                    }
+                } catch (fetchError) {
+                    console.error('Fetch failed, falling back to data file:', fetchError);
+                    // Fallback to data file if fetch fails
+                    const assetsBase = isInSubdirectory ? '../assets/js/' : 'assets/js/';
+                    if (!window.__INCLUDES) {
+                        await loadScript(`${assetsBase}includes.data.js`);
+                    }
+
+                    const headerHTML = window.__INCLUDES?.[`header-${lang}`] || '';
+                    const footerHTML = window.__INCLUDES?.[`footer-${lang}`] || '';
+
+                    const headerPlaceholder = document.getElementById('header-placeholder');
+                    const footerPlaceholder = document.getElementById('footer-placeholder');
+
+                    if (headerPlaceholder && headerHTML) headerPlaceholder.innerHTML = headerHTML;
+                    if (footerPlaceholder && footerHTML) footerPlaceholder.innerHTML = footerHTML;
                 }
             }
 
@@ -205,12 +242,23 @@
     // Debug function to check if files are loading
     function debugLoadStatus() {
         console.log('🔍 Debug Info:');
+        console.log('Protocol:', window.location.protocol);
+        console.log('Hostname:', window.location.hostname);
+        console.log('Full URL:', window.location.href);
         console.log('Path:', window.location.pathname);
+        console.log('__INCLUDES loaded:', !!window.__INCLUDES);
+        console.log('Available includes:', window.__INCLUDES ? Object.keys(window.__INCLUDES) : 'none');
         console.log('CSS loaded:', !!document.querySelector('link[href*="style.css"]'));
         console.log('AOS loaded:', typeof AOS !== 'undefined');
         console.log('Header placeholder:', !!document.getElementById('header-placeholder'));
         console.log('Footer placeholder:', !!document.getElementById('footer-placeholder'));
         console.log('Main content exists:', !!document.querySelector('main'));
+
+        // Check if header/footer content was actually loaded
+        const headerContent = document.getElementById('header-placeholder')?.innerHTML;
+        const footerContent = document.getElementById('footer-placeholder')?.innerHTML;
+        console.log('Header content loaded:', headerContent ? headerContent.length + ' chars' : 'none');
+        console.log('Footer content loaded:', footerContent ? footerContent.length + ' chars' : 'none');
     }
 
     // Load includes when DOM is ready
