@@ -111,60 +111,78 @@
                     <p class="section-subtitle-en">À Propos du Jukusei Koshu</p>
                 </div>
 
-                <div class="content-grid" data-aos="fade-up">
-                    <!-- Definition -->
-                    <article class="content-card" id="sake-definition">
-                        <div class="card-image">
-                            <img src="https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=800&q=80"
-                                alt="Définition du Saké maturé">
-                        </div>
-                        <div class="card-content">
-                            <h3 class="card-title">Définition du Saké maturé</h3>
-                            <p class="card-text">
-                                Le saké maturé (Koshu) est un saké qui a été vieilli à la brasserie pendant au moins 3
-                                ans,
-                                excluant le saké avec sucres ajoutés. Grâce au vieillissement, des arômes
-                                uniques
-                                et des saveurs profondes se développent, créant un saké aux caractéristiques distinctes.
-                            </p>
-                        </div>
-                    </article>
+                <!-- Sake Slider Container (responsive: slider or grid) -->
+                <div class="sake-slider-container">
+                    <div class="swiper sake-slider" data-aos="fade-up">
+                        <div class="swiper-wrapper">
+                            <!-- Definition -->
+                            <div class="swiper-slide">
+                                <article class="content-card" id="sake-definition">
+                                    <div class="card-image">
+                                        <img src="https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=800&q=80"
+                                            alt="Définition du Saké maturé">
+                                    </div>
+                                    <div class="card-content">
+                                        <h3 class="card-title">Définition du Saké maturé</h3>
+                                        <p class="card-text">
+                                            Le saké maturé (Koshu) est un saké qui a été vieilli à la brasserie pendant
+                                            au moins 3 ans,
+                                            excluant le saké avec sucres ajoutés. Grâce au vieillissement, des arômes
+                                            uniques et des saveurs
+                                            profondes se développent, créant un saké aux caractéristiques distinctes.
+                                        </p>
+                                    </div>
+                                </article>
+                            </div>
 
-                    <!-- Types -->
-                    <article class="content-card" id="sake-types">
-                        <div class="card-image">
-                            <img src="https://images.unsplash.com/photo-1553621042-f6e147245754?w=800&q=80"
-                                alt="Types de Saké maturé">
-                        </div>
-                        <div class="card-content">
-                            <h3 class="card-title">Types de Saké maturé</h3>
-                            <p class="card-text">
-                                Il existe trois principaux types de saké maturé : le type léger et raffiné, le type
-                                riche
-                                et corsé, et le type intermédiaire. Différentes caractéristiques émergent selon la
-                                température
-                                de vieillissement, la durée et les ingrédients.
-                            </p>
-                        </div>
-                    </article>
+                            <!-- Types -->
+                            <div class="swiper-slide">
+                                <article class="content-card" id="sake-types">
+                                    <div class="card-image">
+                                        <img src="https://images.unsplash.com/photo-1553621042-f6e147245754?w=800&q=80"
+                                            alt="Types de Saké maturé">
+                                    </div>
+                                    <div class="card-content">
+                                        <h3 class="card-title">Types de Saké maturé</h3>
+                                        <p class="card-text">
+                                            Il existe trois principaux types de saké maturé : le type léger et raffiné,
+                                            le type riche et corsé,
+                                            et le type intermédiaire. Différentes caractéristiques émergent selon la
+                                            température de vieillissement,
+                                            la durée et les ingrédients.
+                                        </p>
+                                    </div>
+                                </article>
+                            </div>
 
-                    <!-- History -->
-                    <article class="content-card" id="sake-history">
-                        <div class="card-image">
-                            <img src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?w=800&q=80"
-                                alt="Histoire du Saké maturé">
+                            <!-- History -->
+                            <div class="swiper-slide">
+                                <article class="content-card" id="sake-history">
+                                    <div class="card-image">
+                                        <img src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?w=800&q=80"
+                                            alt="Histoire du Saké maturé">
+                                    </div>
+                                    <div class="card-content">
+                                        <h3 class="card-title">Histoire du Saké maturé</h3>
+                                        <p class="card-text">
+                                            Bien que la culture du vieillissement du saké existe depuis des siècles, la
+                                            recherche et la promotion
+                                            modernes du saké maturé ont véritablement commencé dans les années 1990. Le
+                                            saké maturé s'établit comme
+                                            une nouvelle culture du saké.
+                                        </p>
+                                    </div>
+                                </article>
+                            </div>
                         </div>
-                        <div class="card-content">
-                            <h3 class="card-title">Histoire du Saké maturé</h3>
-                            <p class="card-text">
-                                Bien que la culture du vieillissement du saké existe depuis des siècles, la recherche et
-                                la
-                                promotion modernes du saké maturé ont véritablement commencé dans les
-                                années 1990.
-                                Le saké maturé s'établit comme une nouvelle culture du saké.
-                            </p>
-                        </div>
-                    </article>
+
+                        <!-- Navigation -->
+                        <div class="swiper-button-prev sake-button-prev"></div>
+                        <div class="swiper-button-next sake-button-next"></div>
+
+                        <!-- Pagination -->
+                        <div class="swiper-pagination sake-pagination"></div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -520,57 +538,78 @@
                     <p class="section-subtitle-en">Apprécier le Saké maturé</p>
                 </div>
 
-                <div class="blog-grid">
-                    <article class="blog-card">
-                        <div class="blog-image">
-                            <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&q=80"
-                                alt="Guide de Température">
-                        </div>
-                        <div class="blog-content">
-                            <time class="blog-date">2025.10.05</time>
-                            <h3 class="blog-title">Température Optimale et Dégustation du Saké maturé</h3>
-                            <p class="blog-excerpt">
-                                Le saké maturé révèle différentes caractéristiques selon la température. Qu'il soit
-                                frais, à température ambiante ou chaud, chaque température apporte des saveurs uniques.
-                            </p>
-                            <a href="../blog/article01.html" class="blog-link">Lire la Suite</a>
-                        </div>
-                    </article>
+                <!-- Blog Slider Container (responsive: slider or grid) -->
+                <div class="blog-slider-container">
+                    <div class="swiper blog-slider">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                                <article class="blog-card">
+                                    <div class="blog-image">
+                                        <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&q=80"
+                                            alt="Guide de Température">
+                                    </div>
+                                    <div class="blog-content">
+                                        <time class="blog-date">2025.10.05</time>
+                                        <h3 class="blog-title">Température Optimale et Dégustation du Saké maturé</h3>
+                                        <p class="blog-excerpt">
+                                            Le saké maturé révèle différentes caractéristiques selon la température.
+                                            Qu'il soit frais,
+                                            à température ambiante ou chaud, chaque température apporte des saveurs
+                                            uniques.
+                                        </p>
+                                        <a href="../blog/article01.html" class="blog-link">Lire la Suite</a>
+                                    </div>
+                                </article>
+                            </div>
 
-                    <article class="blog-card">
-                        <div class="blog-image">
-                            <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&q=80"
-                                alt="Accords Mets">
-                        </div>
-                        <div class="blog-content">
-                            <time class="blog-date">2025.09.20</time>
-                            <h3 class="blog-title">Accorder le Saké maturé avec la Nourriture</h3>
-                            <p class="blog-excerpt">
-                                Les saveurs profondes du saké maturé se marient merveilleusement avec diverses
-                                cuisines.
-                                Découvrez des combinaisons harmonieuses avec les plats japonais, occidentaux et
-                                ethniques.
-                            </p>
-                            <a href="../blog/index.html" class="blog-link">Lire la Suite</a>
-                        </div>
-                    </article>
+                            <div class="swiper-slide">
+                                <article class="blog-card">
+                                    <div class="blog-image">
+                                        <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&q=80"
+                                            alt="Accords Mets">
+                                    </div>
+                                    <div class="blog-content">
+                                        <time class="blog-date">2025.09.20</time>
+                                        <h3 class="blog-title">Accorder le Saké maturé avec la Nourriture</h3>
+                                        <p class="blog-excerpt">
+                                            Les saveurs profondes du saké maturé se marient merveilleusement avec
+                                            diverses cuisines.
+                                            Découvrez des combinaisons harmonieuses avec les plats japonais, occidentaux
+                                            et ethniques.
+                                        </p>
+                                        <a href="../blog/index.html" class="blog-link">Lire la Suite</a>
+                                    </div>
+                                </article>
+                            </div>
 
-                    <article class="blog-card">
-                        <div class="blog-image">
-                            <img src="https://images.unsplash.com/photo-1607166452427-7e4477079cb9?w=800&q=80"
-                                alt="Méthodes de Conservation">
+                            <div class="swiper-slide">
+                                <article class="blog-card">
+                                    <div class="blog-image">
+                                        <img src="https://images.unsplash.com/photo-1607166452427-7e4477079cb9?w=800&q=80"
+                                            alt="Méthodes de Conservation">
+                                    </div>
+                                    <div class="blog-content">
+                                        <time class="blog-date">2025.09.08</time>
+                                        <h3 class="blog-title">Conserver le Saké maturé à la Maison</h3>
+                                        <p class="blog-excerpt">
+                                            Apprenez les méthodes de conservation appropriées pour déguster votre saké
+                                            maturé en condition optimale.
+                                            Avec des soins appropriés, vous pouvez même continuer le processus de
+                                            vieillissement.
+                                        </p>
+                                        <a href="../blog/index.html" class="blog-link">Lire la Suite</a>
+                                    </div>
+                                </article>
+                            </div>
                         </div>
-                        <div class="blog-content">
-                            <time class="blog-date">2025.09.08</time>
-                            <h3 class="blog-title">Conserver le Saké maturé à la Maison</h3>
-                            <p class="blog-excerpt">
-                                Apprenez les méthodes de conservation appropriées pour déguster votre saké maturé en
-                                condition optimale.
-                                Avec des soins appropriés, vous pouvez même continuer le processus de vieillissement.
-                            </p>
-                            <a href="../blog/index.html" class="blog-link">Lire la Suite</a>
-                        </div>
-                    </article>
+
+                        <!-- Navigation -->
+                        <div class="swiper-button-prev blog-button-prev"></div>
+                        <div class="swiper-button-next blog-button-next"></div>
+
+                        <!-- Pagination -->
+                        <div class="swiper-pagination blog-pagination"></div>
+                    </div>
                 </div>
 
                 <div class="section-cta">
@@ -690,12 +729,7 @@
     <!-- Footer -->
     <div id="footer-placeholder"></div>
 
-    <!-- Scroll to Top Button -->
-    <button class="scroll-top" id="scrollTop" aria-label="Retour en haut">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 19V5M5 12l7-7 7 7" />
-        </svg>
-    </button>
+
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>

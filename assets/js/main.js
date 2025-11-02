@@ -15,9 +15,13 @@ window.initHeaderFooterScripts = function() {
     initHamburgerMenu();
     initHeaderScroll();
     initLanguageSwitcher();
+    // Footer挿入後にスクロールトップボタンのイベントを再度紐付け
+    initScrollTop();
 };
 
 function initAll() {
+    // Viewport unit safety: set --app-height and bind listeners
+    initViewportSizing();
     initHamburgerMenu();
 
     // Only initialize sliders if Swiper is available and elements exist
@@ -40,6 +44,54 @@ function initAll() {
     initFilterModal();
     initShopsFilter();
     initShopMapLazy();
+}
+
+// ============================================
+// Viewport sizing fixes (mobile 100vh/100vw issues)
+// ============================================
+function initViewportSizing() {
+    const setAppHeight = () => {
+        // Use innerHeight to avoid URL bar issues
+        const h = window.innerHeight;
+        document.documentElement.style.setProperty('--app-height', h + 'px');
+    };
+
+    // Debounced refresher for layout + libraries
+    let rafId = null;
+    const refreshLayout = () => {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+            setAppHeight();
+            // Update all Swiper instances if available
+            try {
+                if (typeof Swiper !== 'undefined') {
+                    document.querySelectorAll('.swiper').forEach(el => {
+                        if (el && el.swiper && typeof el.swiper.update === 'function') {
+                            el.swiper.update();
+                        }
+                    });
+                }
+            } catch (e) { /* no-op */ }
+
+            // Refresh AOS animations if loaded
+            try {
+                if (typeof AOS !== 'undefined' && AOS.refresh) {
+                    // refreshHard is heavier; prefer refresh
+                    AOS.refresh();
+                }
+            } catch (e) { /* no-op */ }
+        });
+    };
+
+    // Initial set
+    setAppHeight();
+
+    // Listen to orientation changes and resizes
+    window.addEventListener('orientationchange', () => {
+        // Some browsers need a tiny delay after orientation change
+        setTimeout(refreshLayout, 60);
+    });
+    window.addEventListener('resize', refreshLayout);
 }
 
 // ============================================
