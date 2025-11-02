@@ -56,12 +56,33 @@ function initViewportSizing() {
         document.documentElement.style.setProperty('--app-height', h + 'px');
     };
 
+    // Some mobile Safari versions mis-handle CSS aspect-ratio after orientation change
+    // Normalize height for known ratio boxes (e.g., .activity-thumbs => 3/2)
+    const fixAspectRatioBoxes = () => {
+        try {
+            const thumbs = document.querySelectorAll('.activity-thumbs');
+            thumbs.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const w = rect.width;
+                if (!w || !isFinite(w)) return;
+                // 3:2 aspect ratio
+                const targetH = Math.round((w * 2) / 3);
+                // Only touch inline style when needed to avoid layout thrash
+                if (el.__lastSetHeight !== targetH) {
+                    el.style.height = targetH + 'px';
+                    el.__lastSetHeight = targetH;
+                }
+            });
+        } catch (_) { /* no-op */ }
+    };
+
     // Debounced refresher for layout + libraries
     let rafId = null;
     const refreshLayout = () => {
         if (rafId) cancelAnimationFrame(rafId);
         rafId = requestAnimationFrame(() => {
             setAppHeight();
+            fixAspectRatioBoxes();
             // Update all Swiper instances if available
             try {
                 if (typeof Swiper !== 'undefined') {
@@ -85,13 +106,35 @@ function initViewportSizing() {
 
     // Initial set
     setAppHeight();
+    // Run once after paint to ensure widths are ready
+    requestAnimationFrame(fixAspectRatioBoxes);
 
     // Listen to orientation changes and resizes
     window.addEventListener('orientationchange', () => {
-        // Some browsers need a tiny delay after orientation change
-        setTimeout(refreshLayout, 60);
+        // Some browsers need a longer delay after orientation change
+        setTimeout(() => {
+            refreshLayout();
+            // Hard refresh AOS positions to avoid stale offsets causing extra whitespace
+            try {
+                if (typeof AOS !== 'undefined') {
+                    if (typeof AOS.refreshHard === 'function') {
+                        AOS.refreshHard();
+                    } else if (typeof AOS.refresh === 'function') {
+                        AOS.refresh();
+                    }
+                }
+            } catch (e) { /* no-op */ }
+            // Re-apply ratio fixes again after AOS settles
+            setTimeout(() => {
+                fixAspectRatioBoxes();
+            }, 60);
+        }, 120);
     });
-    window.addEventListener('resize', refreshLayout);
+    window.addEventListener('resize', () => {
+        refreshLayout();
+        // In quick resizes, run a second pass
+        setTimeout(fixAspectRatioBoxes, 60);
+    });
 }
 
 // ============================================

@@ -88,6 +88,15 @@ html {
     overflow-y: auto;
 }
 
+/* Fallback for browsers that don't support overflow: clip (e.g., some Safari versions) */
+@supports not (overflow: clip) {
+
+    html,
+    body {
+        overflow-x: hidden;
+    }
+}
+
 /* ============================================
    Text Selection - 選択時の配色
    ============================================ */
@@ -1058,9 +1067,12 @@ body:not(:has(.breadcrumb)) .project-section .section-title-jp {
 
 .content-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+    /* Avoid nested min() to prevent Safari reflow glitches on orientation change */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--spacing-xl);
     margin-top: var(--spacing-xl);
+    /* Prevent grid container from causing horizontal overflow */
+    min-width: 0;
 }
 
 .content-card {
@@ -1136,9 +1148,12 @@ body:not(:has(.breadcrumb)) .project-section .section-title-jp {
 
 .society-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+    /* Avoid nested min() to prevent Safari reflow glitches on orientation change */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--spacing-xl);
     align-items: stretch;
+    /* Prevent grid container from causing horizontal overflow */
+    min-width: 0;
 }
 
 .society-card {
@@ -1150,6 +1165,8 @@ body:not(:has(.breadcrumb)) .project-section .section-title-jp {
     flex-direction: column;
     justify-content: space-between;
     min-height: 100%;
+    /* Prevent grid child from overflowing its column on narrow widths */
+    min-width: 0;
 }
 
 .society-card .card-title {
@@ -1861,9 +1878,12 @@ body:not(:has(.breadcrumb)) .project-section .section-title-jp {
    ============================================ */
 .blog-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+    /* Avoid nested min() to prevent Safari reflow glitches on orientation change */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--spacing-lg);
     margin-top: var(--spacing-lg);
+    /* Prevent grid container from causing horizontal overflow */
+    min-width: 0;
 }
 
 .blog-card {
@@ -2505,6 +2525,8 @@ body.menu-open {
 
     .society-card {
         padding: var(--spacing-lg) var(--spacing-xl);
+        /* Avoid keeping equal-height from landscape when returning to portrait */
+        min-height: auto;
     }
 
     /* News Section */
